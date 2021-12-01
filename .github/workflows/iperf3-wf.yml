@@ -59,7 +59,7 @@ jobs:
           echo "# ## # # Run as Server"
           echo "###################################################################"             
           # Start server on the background
-          docker run --rm --name=iperf3-srv -p 5201:5201 ${name}:${version} -s -u &
+          docker run --rm --name=iperf3-srv -p 5201:5201 ${name}:${version} -s &
           docker image ls
           docker container ls
           docker port iperf3-srv # show all mapped ports of container
@@ -72,5 +72,5 @@ jobs:
           echo "###################################################################"
           echo "## UDP Tests"
           echo "###################################################################"          
-          # sudo docker run --name=iperf3-client --rm --network=host ${name}:${version} -c $SERVER_CONTAINER_IP -u                 
+          # sudo docker run --name=iperf3-client --rm --network=host ${name}:${version} -u -c $SERVER_CONTAINER_IP                  
           # docker container rm --force iperf3-srv 
