@@ -16,7 +16,7 @@ jobs:
       version: "latest"
       name: "clearlinux/iperf"
       dockerdir: "dockerfiles"
-      dockerfile: "Dockerfile.clearlinux.iperf"               
+      dockerfile: "Dockerfile.clearlinux.iperf3"               
     steps:
     - uses: actions/checkout@v2
     - name: "os fingerprinting"
