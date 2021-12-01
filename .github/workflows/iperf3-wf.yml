@@ -57,6 +57,7 @@ jobs:
           echo "# ## # # Run as Server"
           echo "###################################################################" 
           # Start server in daemon mode
+          # iperf3 [-s|-c host] [options]
           docker run --rm --name=iperf-srv -p 5201:5201 clearlinux/iperf -u -s -D
           docker image ls
           docker container ls
@@ -70,4 +71,5 @@ jobs:
           echo "## UDP Tests"
           echo "###################################################################"           
           # limits the bandwidth for UDP clients to 1 Mbit per second by default
-          sudo docker run --rm --network=host clearlinux/iperf -u -c $CONTAINER_IP                  
+          # iperf3 [-s|-c host] [options]
+          sudo docker run --rm --network=host clearlinux/iperf -c $CONTAINER_IP -u
