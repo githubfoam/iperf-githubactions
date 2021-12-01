@@ -71,4 +71,4 @@ jobs:
           ## UDP Tests
           ###################################################################
           # limits the bandwidth for UDP clients to 1 Mbit per second by default
-          sudo docker run --rm --network=host clearlinux/iperf -u -c $CONTAINER_IP 1M                   
+          sudo docker run --rm --network=host clearlinux/iperf -u -c $CONTAINER_IP                  
