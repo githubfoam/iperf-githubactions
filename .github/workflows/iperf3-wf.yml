@@ -39,6 +39,7 @@ jobs:
           # Start server on the background
           docker run --rm --name=iperf3-srv -p 5201:5201 ${name}:${version} -s &
           docker image ls
+          docker ps -a
           docker container ls
           docker network ls    
           SERVER_CONTAINER_IP=$(sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf3-srv)
@@ -51,6 +52,8 @@ jobs:
           docker ps -a
           docker container ls
           docker system prune -a -f
+          docker ps -a
+          docker container ls          
     - name: "UDP Tests"
       run: |
           # destroyed afterwards (use --rm )
