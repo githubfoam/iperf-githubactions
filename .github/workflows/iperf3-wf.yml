@@ -52,7 +52,8 @@ jobs:
           docker ps -a
           docker container ls
           docker container stop iperf3-srv 
-          docker system prune -a -f
+          docker container rm iperf3-srv
+          # docker system prune -a -f
           docker ps -a
           docker container ls          
     - name: "UDP Tests"
