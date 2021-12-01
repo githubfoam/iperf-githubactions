@@ -59,7 +59,7 @@ jobs:
           echo "# ## # # Run as Server"
           echo "###################################################################"             
           # Start server on the background
-          docker run --rm --name=iperf3-srv -p 5201:5201 ${name}:${version} -u -s &
+          docker run --rm --name=iperf3-srv -p 5201:5201 ${name}:${version} -s -u &
           docker image ls
           docker container ls
           docker port iperf3-srv # show all mapped ports of container
