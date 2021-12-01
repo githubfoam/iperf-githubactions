@@ -51,7 +51,7 @@ jobs:
           sudo docker run --rm --name=iperf3-client --network=host ${name}:${version} -c $SERVER_CONTAINER_IP -u -b 1000m          
           docker ps -a
           docker container ls
-          docker container stop iperf3-srv iperf3-client 
+          docker container stop iperf3-srv 
           docker system prune -a -f
           docker ps -a
           docker container ls          
