@@ -1,0 +1,49 @@
+name: "Network Performance with iperf CI workflow"
+
+
+on:
+  push:
+    branches: [ test ]
+  schedule:
+      # https://crontab.guru/examples.html #every friday at midnight  
+      - cron:  '0 0 * * FRI' 
+jobs:
+
+  ubuntu-latest-iperf-job:
+    name: "iperf docker clearlinux"
+    runs-on: ubuntu-latest
+    env:
+      version: "latest"
+      name: "clearlinux/iperf"
+      dockerdir: "dockerfiles"
+      dockerfile: "Dockerfile.clearlinux.iperf"               
+    steps:
+    - uses: actions/checkout@v2
+    - name: "os fingerprinting"
+      run: |
+        hostnamectl status
+        lsb_release -a
+        lsb_release -d
+        cat /etc/lsb-release
+        cat /etc/issue
+        cat /etc/os-release
+        sudo apt-get install -y neofetch && neofetch    
+    - name: "maximum bandwidth"
+      run: |
+          # destroyed afterwards (use --rm )
+          # all subsequent Dockerfile commands generate new images and the cache is not used
+          sudo docker build --no-cache --rm  -t ${name}:${version}  . --file ${dockerdir}/${dockerfile}
+          # Run as Server
+          docker run --rm --name=iperf-srv -p 5201:5201 clearlinux/iperf -s &
+          docker image ls
+          docker container ls
+          docker network ls
+          # get network id of bridge
+          CONTAINER_IP=$(sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf-srv)
+          echo $CONTAINER_IP
+          # Run as Client (server IP address):
+          # https://gist.github.com/githubfoam/7f2edc5bd6bb5d30199360c7fccc04ae
+          ###################################################################
+          ## -b flag, replacing the number after with the maximum bandwidth
+          ###################################################################
+          sudo docker run --rm --network=host clearlinux/iperf -c $CONTAINER_IP -u -b 1000m          
