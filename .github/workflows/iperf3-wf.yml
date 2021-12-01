@@ -49,13 +49,7 @@ jobs:
           echo "## # # Run as Client (server IP address):"
           echo "###################################################################"          
           sudo docker run --rm --name=iperf3-client --network=host ${name}:${version} -c $SERVER_CONTAINER_IP -u -b 1000m          
-          docker ps -a
-          docker container ls
-          # docker container stop iperf3-srv 
-          docker container rm --force iperf3-srv
-          # docker system prune -a -f
-          docker ps -a
-          docker container ls          
+          docker container rm --force iperf3-srv          
     - name: "UDP Tests"
       run: |
           # destroyed afterwards (use --rm )
@@ -68,7 +62,6 @@ jobs:
           docker run --rm --name=iperf3-srv -p 5201:5201 ${name}:${version} -u -s &
           docker image ls
           docker container ls
-          docker network ls
           docker port iperf3-srv # show all mapped ports of container
           SERVER_CONTAINER_IP=$(sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf3-srv)
           echo $SERVER_CONTAINER_IP
@@ -79,4 +72,5 @@ jobs:
           echo "###################################################################"
           echo "## UDP Tests"
           echo "###################################################################"          
-          sudo docker run --rm --network=host ${name}:${version} -c $SERVER_CONTAINER_IP -u                 
+          # sudo docker run --name=iperf3-client --rm --network=host ${name}:${version} -c $SERVER_CONTAINER_IP -u                 
+          # docker container rm --force iperf3-srv 
