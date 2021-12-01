@@ -16,7 +16,7 @@ jobs:
       version: "latest"
       name: "clearlinux/iperf"
       dockerdir: "dockerfiles"
-      dockerfile: "Dockerfile.clearlinux.iperf3"               
+      dockerfile: "Dockerfile.clearlinux.iperf"               
     steps:
     - uses: actions/checkout@v2
     - name: "os fingerprinting"
@@ -32,44 +32,46 @@ jobs:
       run: |
           # destroyed afterwards (use --rm )
           # all subsequent Dockerfile commands generate new images and the cache is not used
-          sudo docker build --no-cache --rm  -t ${name}:${version}  . --file ${dockerdir}/${dockerfile}            
-          echo "###################################################################"
-          echo "# ## # # Run as Server"
-          echo "###################################################################"                  
+          sudo docker build --no-cache --rm  -t ${name}:${version}  . --file ${dockerdir}/${dockerfile}          
+          # ###################################################################
+          # ## # # Run as Server
+          # ###################################################################          
           # Start server on the background
           # docker run --rm --name=iperf-srv -p 5201:5201 clearlinux/iperf -s &
           # Start server in daemon mode
           docker run --rm --name=iperf-srv -p 5201:5201 clearlinux/iperf -s -D
           docker image ls
           docker container ls
-          docker network ls          
+          docker network ls    
+          CONTAINER_IP=$(sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf-srv)
+          echo $CONTAINER_IP                
           # # https://gist.github.com/githubfoam/7f2edc5bd6bb5d30199360c7fccc04ae
-          echo "###################################################################"
-          echo "# ## # # Run as Client (server IP address):"
-          echo "###################################################################"          
-          sudo docker run --rm --network=host clearlinux/iperf -c $CONTAINER_IP -u -b 1000m          
+          # ###################################################################
+          # ## # # Run as Client (server IP address):
+          # ###################################################################
+          # sudo docker run --rm --network=host clearlinux/iperf -c $CONTAINER_IP -u -b 1000m          
     - name: "UDP Tests"
       run: |
           # destroyed afterwards (use --rm )
           # all subsequent Dockerfile commands generate new images and the cache is not used
           sudo docker build --no-cache --rm  -t ${name}:${version}  . --file ${dockerdir}/${dockerfile}
-          echo "###################################################################"
-          echo "# ## # # Run as Server"
-          echo "###################################################################" 
+          # ###################################################################
+          # ## # # Run as Server
+          # ################################################################### 
           # Start server in daemon mode
-          # iperf3 [-s|-c host] [options]
           docker run --rm --name=iperf-srv -p 5201:5201 clearlinux/iperf -u -s -D
           docker image ls
           docker container ls
           docker network ls
           docker port iperf-srv # show all mapped ports of container
-          echo "###################################################################"
-          echo "# ## # # Run as Client (server IP address):"
-          echo "###################################################################" 
+          CONTAINER_IP=$(sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf-srv)
+          echo $CONTAINER_IP
+          # ###################################################################
+          # ## # # Run as Client (server IP address):
+          # ###################################################################
           # https://gist.github.com/githubfoam/7f2edc5bd6bb5d30199360c7fccc04ae
-          echo "###################################################################"
-          echo "## UDP Tests"
-          echo "###################################################################"           
+          ###################################################################
+          ## UDP Tests
+          ###################################################################
           # limits the bandwidth for UDP clients to 1 Mbit per second by default
-          # iperf3 [-s|-c host] [options]
-          sudo docker run --rm --network=host clearlinux/iperf -c $CONTAINER_IP -u
+          sudo docker run --rm --network=host clearlinux/iperf -c $CONTAINER_IP -u                 
