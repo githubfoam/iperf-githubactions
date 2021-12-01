@@ -47,7 +47,7 @@ jobs:
           echo "###################################################################"
           echo "# ## # # Run as Client (server IP address):"
           echo "###################################################################"          
-          # sudo docker run --rm --network=host clearlinux/iperf -c $CONTAINER_IP -u -b 1000m          
+          sudo docker run --rm --network=host clearlinux/iperf -c $CONTAINER_IP -u -b 1000m          
     - name: "UDP Tests"
       run: |
           # destroyed afterwards (use --rm )
