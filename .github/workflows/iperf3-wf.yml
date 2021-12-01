@@ -1,4 +1,4 @@
-name: "Network Performance with iperf CI workflow"
+name: "Network Performance with iperf3 CI workflow"
 
 
 on:
@@ -32,43 +32,42 @@ jobs:
       run: |
           # destroyed afterwards (use --rm )
           # all subsequent Dockerfile commands generate new images and the cache is not used
-          sudo docker build --no-cache --rm  -t ${name}:${version}  . --file ${dockerdir}/${dockerfile}
-          # Run as Server
+          sudo docker build --no-cache --rm  -t ${name}:${version}  . --file ${dockerdir}/${dockerfile}            
+          echo "###################################################################"
+          echo "# ## # # Run as Server"
+          echo "###################################################################"                  
           # Start server on the background
           # docker run --rm --name=iperf-srv -p 5201:5201 clearlinux/iperf -s &
           # Start server in daemon mode
           docker run --rm --name=iperf-srv -p 5201:5201 clearlinux/iperf -s -D
           docker image ls
           docker container ls
-          docker network ls
-          # # get network id of bridge
-          # CONTAINER_IP=$(sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf-srv)
-          # echo $CONTAINER_IP
-          # # Run as Client (server IP address):
+          docker network ls          
           # # https://gist.github.com/githubfoam/7f2edc5bd6bb5d30199360c7fccc04ae
-          # ###################################################################
-          # ## -b flag, replacing the number after with the maximum bandwidth
-          # ###################################################################
+          echo "###################################################################"
+          echo "# ## # # Run as Client (server IP address):"
+          echo "###################################################################"          
           # sudo docker run --rm --network=host clearlinux/iperf -c $CONTAINER_IP -u -b 1000m          
     - name: "UDP Tests"
       run: |
           # destroyed afterwards (use --rm )
           # all subsequent Dockerfile commands generate new images and the cache is not used
           sudo docker build --no-cache --rm  -t ${name}:${version}  . --file ${dockerdir}/${dockerfile}
-          # Run as Server
+          echo "###################################################################"
+          echo "# ## # # Run as Server"
+          echo "###################################################################" 
           # Start server in daemon mode
           docker run --rm --name=iperf-srv -p 5201:5201 clearlinux/iperf -u -s -D
           docker image ls
           docker container ls
           docker network ls
           docker port iperf-srv # show all mapped ports of container
-          # get network id of bridge
-          CONTAINER_IP=$(sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf-srv)
-          echo $CONTAINER_IP
-          # Run as Client (server IP address):
+          echo "###################################################################"
+          echo "# ## # # Run as Client (server IP address):"
+          echo "###################################################################" 
           # https://gist.github.com/githubfoam/7f2edc5bd6bb5d30199360c7fccc04ae
-          ###################################################################
-          ## UDP Tests
-          ###################################################################
+          echo "###################################################################"
+          echo "## UDP Tests"
+          echo "###################################################################"           
           # limits the bandwidth for UDP clients to 1 Mbit per second by default
           sudo docker run --rm --network=host clearlinux/iperf -u -c $CONTAINER_IP                  
