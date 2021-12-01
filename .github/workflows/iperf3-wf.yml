@@ -10,7 +10,7 @@ on:
 jobs:
 
   ubuntu-latest-iperf-job:
-    name: "iperf docker clearlinux"
+    name: "iperf3 docker clearlinux"
     runs-on: ubuntu-latest
     env:
       version: "latest"
@@ -48,13 +48,16 @@ jobs:
           echo "## # # Run as Client (server IP address):"
           echo "###################################################################"          
           sudo docker run --rm --network=host ${name}:${version} -c $SERVER_CONTAINER_IP -u -b 1000m          
+          docker ps -a
+          docker container ls
+          docker system prune -a -f
     - name: "UDP Tests"
       run: |
           # destroyed afterwards (use --rm )
           # all subsequent Dockerfile commands generate new images and the cache is not used
           sudo docker build --no-cache --rm  -t ${name}:${version}  . --file ${dockerdir}/${dockerfile}
           echo "###################################################################"
-          echo "## # # Run as Client (server IP address):"
+          echo "# ## # # Run as Server"
           echo "###################################################################"             
           # Start server on the background
           docker run --rm --name=iperf3-srv -p 5201:5201 ${name}:${version} -u -s &
