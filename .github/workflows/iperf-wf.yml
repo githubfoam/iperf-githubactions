@@ -41,15 +41,15 @@ jobs:
           docker image ls
           docker container ls
           docker network ls
-          # get network id of bridge
-          CONTAINER_IP=$(sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf-srv)
-          echo $CONTAINER_IP
-          # Run as Client (server IP address):
-          # https://gist.github.com/githubfoam/7f2edc5bd6bb5d30199360c7fccc04ae
-          ###################################################################
-          ## -b flag, replacing the number after with the maximum bandwidth
-          ###################################################################
-          sudo docker run --rm --network=host clearlinux/iperf -c $CONTAINER_IP -u -b 1000m          
+          # # get network id of bridge
+          # CONTAINER_IP=$(sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf-srv)
+          # echo $CONTAINER_IP
+          # # Run as Client (server IP address):
+          # # https://gist.github.com/githubfoam/7f2edc5bd6bb5d30199360c7fccc04ae
+          # ###################################################################
+          # ## -b flag, replacing the number after with the maximum bandwidth
+          # ###################################################################
+          # sudo docker run --rm --network=host clearlinux/iperf -c $CONTAINER_IP -u -b 1000m          
     - name: "UDP Tests"
       run: |
           # destroyed afterwards (use --rm )
