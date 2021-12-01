@@ -37,7 +37,8 @@ jobs:
           echo "# ## # # Run as Server"
           echo "###################################################################"
           # Start server in daemon mode
-          docker run --rm --name=iperf3-srv -p 5201:5201 ${name}:${version} -s -D
+          # docker run --rm --name=iperf3-srv -p 5201:5201 ${name}:${version} -s -D
+          docker run --rm --name=iperf3-srv -p 5201:5201 ${name}:${version} -s &
           docker image ls
           docker container ls
           docker network ls    
