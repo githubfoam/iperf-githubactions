@@ -72,5 +72,31 @@ jobs:
           echo "###################################################################"
           echo "## UDP Tests"
           echo "###################################################################"          
+          # replacing the number after with the maximum bandwidth
           sudo docker run --name=iperf3-client --rm --network=host ${name}:${version} -c $SERVER_CONTAINER_IP -u  -b 1M                   
           docker container rm --force iperf3-srv 
+    - name: "measure the bi-directional bandwidths simultaneousely"
+      run: |
+          # destroyed afterwards (use --rm )
+          # all subsequent Dockerfile commands generate new images and the cache is not used
+          sudo docker build --no-cache --rm  -t ${name}:${version}  . --file ${dockerdir}/${dockerfile}
+          echo "###################################################################"
+          echo "# ## # # Run as Server"
+          echo "###################################################################"             
+          # Start server on the background
+          docker run --rm --name=iperf3-srv -p 5201:5201 ${name}:${version} -s &
+          docker image ls
+          docker container ls
+          docker port iperf3-srv # show all mapped ports of container
+          SERVER_CONTAINER_IP=$(sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' iperf3-srv)
+          echo $SERVER_CONTAINER_IP
+          echo "###################################################################"
+          echo "## # # Run as Client (server IP address):"
+          echo "###################################################################"          
+          # https://gist.github.com/githubfoam/7f2edc5bd6bb5d30199360c7fccc04ae
+          echo "###################################################################"
+          echo "## UDP Tests"
+          echo "###################################################################"          
+          # replacing the number after with the maximum bandwidth
+          sudo docker run --name=iperf3-client --rm --network=host ${name}:${version} -c $SERVER_CONTAINER_IP -d
+          docker container rm --force iperf3-srv           
